@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini GFS - User Client</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        
+        :root {
+            --main-bg: #f4f6f9;
+            --card-bg: #ffffff;
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --border-color: #e9ecef;
+            --text-dark: #343a40;
+            --text-light: #666;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--main-bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 900px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-left: 15px;
+            cursor: pointer;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .welcome {
+            margin-bottom: 25px;
+            color: var(--text-dark);
+        }
+
+        .welcome h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 5px 0;
+        }
+
+        .welcome p {
+            color: var(--text-light);
+            margin: 0;
+        }
+
+        .upload-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px dashed var(--border-color);
+            border-radius: 10px;
+            text-align: center;
+            background: #fafafa;
+        }
+
+        .upload-section h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        .drop-area {
+            padding: 40px 20px;
+            border: 2px dashed var(--secondary-color);
+            border-radius: 8px;
+            background-color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .drop-area i {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .drop-area p {
+            color: var(--text-light);
+            margin: 5px 0;
+        }
+
+        .drop-area button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .drop-area button:hover {
+            background-color: #0056b3;
+        }
+
+        .encrypt-checkbox {
+            text-align: left;
+            margin-top: 10px;
+            color: var(--text-light);
+            display: inline-flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        .encrypt-checkbox input {
+            margin-right: 5px;
+        }
+
+        .my-files-section {
+            border-top: 1px solid var(--border-color);
+            padding-top: 30px;
+        }
+
+        .files-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .search-bar input {
+            padding: 8px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            width: 300px;
+            font-size: 14px;
+        }
+
+        .actions button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .actions button.request {
+            background-color: var(--primary-color);
+        }
+
+        .actions button:hover {
+            opacity: 0.9;
+        }
+
+        .file-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .file-table th, .file-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .file-table th {
+            background-color: #eaf1f7;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .file-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .file-status .available {
+            color: var(--success-color);
+            font-weight: 500;
+        }
+
+        .file-status .processing {
+            color: var(--warning-color);
+            font-weight: 500;
+        }
+
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .status-dot.available { background-color: var(--success-color); }
+        .status-dot.processing { background-color: var(--warning-color); }
+
+        .actions-bar {
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .actions-bar .action-button {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .actions-bar .action-button i {
+            margin-right: 5px;
+        }
+
+        .actions-bar .action-button:hover {
+            background-color: #e9ecef;
+        }
+
+        .actions-bar .request-file {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .actions-bar .request-file:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        
+        .new-files-badge {
+            margin-left: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Mini GFS</div>
+            <div class="user-profile">
+                <i class="fas fa-cog" style="color:var(--text-light)"></i>
+                <img src="" alt="User Avatar">
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="welcome">
+                <h2>Welcome, User!</h2>
+                <p>Manage Your Files</p>
+            </div>
+            
+            <h3>Upload New File</h3>
+            <div class="upload-section">
+                <input type="file" id="fileInput" style="display:none;" onchange="handleFileSelect(event)">
+                <div class="drop-area" id="dropArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p id="dropText">Drag & Drop your large files here, or click to browse</p>
+                    <button onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        Browse Files
+                    </button>
+                    <div class="encrypt-checkbox">
+                        <input type="checkbox" id="encrypt">
+                        <label for="encrypt">Encrypt File</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="my-files-section">
+                <h3>My Files</h3>
+                
+                <div class="files-header">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search for files...">
+                    </div>
+                </div>
+
+                <table class="file-table" id="fileTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox"></th>
+                            <th>File Name</th>
+                            <th>Size</th>
+                            <th>Upload Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-filename="Project_Phoenix_Final.zip">
+                            <td><input type="checkbox"></td>
+                            <td>**Project_Phoenix_Final.zip**</td>
+                            <td>1.5 GB</td>
+                            <td>2023-10-26</td>
+                            <td class="file-status"><span class="status-dot available"></span> Available</td>
+                        </tr>
+                        <tr data-filename="Backup_Database Q3.sql">
+                            <td><input type="checkbox"></td>
+                            <td>Backup_Database Q3.sql</td>
+                            <td>**3.2 GB**</td>
+                            <td>2023-12-20</td>
+                            <td class="file-status"><span class="status-dot available"></span> Available</td>
+                        </tr>
+                        <tr data-filename="Massive_Data_Lake_Export.csv">
+                            <td><input type="checkbox"></td>
+                            <td>**Massive_Data_Lake_Export.csv**</td>
+                            <td>10.8 GB</td>
+                            <td>2024-02-01</td>
+                            <td class="file-status"><span class="status-dot processing"></span> Processing</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="actions-bar">
+                    <div class="new-files-badge">4 new files added</div>
+                    <button class="action-button request-file" onclick="handleFileRequest()">
+                        <i class="fas fa-code-pull-request"></i> Request File
+                    </button>
+                    <button class="action-button" onclick="handleDownload()">
+                        <i class="fas fa-download"></i> Download Selected
+                    </button>
+                    <button class="action-button">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                    <button class="action-button">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_ENDPOINT = 'http://localhost:8080/gfs'; 
+       
+        function uploadFileToGFS(file, isEncrypted) {
+            console.log(`Uploading file: ${file.name} (Size: ${file.size} bytes). Encrypted: ${isEncrypted}`);
+            
+        
+            fetch(`${API_ENDPOINT}/upload`, {
+                method: 'POST',
+                body: new FormData().append('gfs_file', file)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(`Upload initiated for ${file.name}. Master node acknowledged.`);
+            
+            })
+            .catch(error => {
+                console.error('Upload failed:', error);
+                alert('Upload failed. Check server status.');
+            });
+        }
+        
+    
+        function handleFileRequest() {
+            const selectedFiles = Array.from(document.querySelectorAll('#fileTable input[type="checkbox"]:checked'))
+                .map(checkbox => checkbox.closest('tr').dataset.filename);
+                
+            if (selectedFiles.length === 0) {
+                alert("Please select files to request.");
+                return;
+            }
+            
+            console.log("Requesting files:", selectedFiles);
+            
+        
+            alert(`File request sent for: ${selectedFiles.join(', ')}. Master is coordinating download.`);
+            
+        }
+
+       
+        const dropArea = document.getElementById('dropArea');
+        const fileInput = document.getElementById('fileInput');
+
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+       
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.style.borderColor = 'var(--primary-color)', false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.style.borderColor = 'var(--secondary-color)', false);
+        });
+
+     
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                processFile(files[0]);
+            }
+        }
+        
+     
+        function handleFileSelect(e) {
+            if (e.target.files.length > 0) {
+                processFile(e.target.files[0]);
+            }
+        }
+        
+        function processFile(file) {
+            const isEncrypted = document.getElementById('encrypt').checked;
+            document.getElementById('dropText').textContent = `File selected: ${file.name}. Initiating upload...`;
+            uploadFileToGFS(file, isEncrypted);
+        }
+
+        function handleDownload() {
+            
+             alert("Download triggered for selected files.");
+        }
+        
+        function loadFiles() {
+            
+            console.log("Fetching file list from GFS Master...");
+            
+        }
+
+
+        document.addEventListener('DOMContentLoaded', loadFiles);
+    </script>
+</body>
+</html>
