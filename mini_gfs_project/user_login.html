@@ -78,7 +78,7 @@
         margin-bottom: 8px;
     }
 
-    .input-group input {
+    .input-group input, .input-group select {
         width: 100%;
         padding: 10px 12px;
         border: 1px solid var(--border-color);
@@ -88,7 +88,7 @@
         transition: border-color 0.3s;
     }
 
-    .input-group input:focus {
+    .input-group input:focus, .input-group select:focus {
         border-color: var(--primary);
     }
 
@@ -141,10 +141,6 @@
         gap: 5px;
     }
 
-    .status-badge i {
-        font-size: 14px;
-    }
-
     .error {
         color: red;
         font-size: 14px;
@@ -170,6 +166,15 @@
         <div id="error" class="error">Invalid email or password.</div>
 
         <div class="input-group">
+            <label for="role">Login as</label>
+            <select id="role" required>
+                <option value="">Select Role</option>
+                <option value="user">User</option>
+                <option value="manager">Manager</option>
+            </select>
+        </div>
+
+        <div class="input-group">
             <label for="email">Email Address</label>
             <input type="email" id="email" placeholder="Enter your email" required>
         </div>
@@ -193,47 +198,56 @@
 </div>
 
 <script>
-
     window.addEventListener("load", () => {
         window.moveTo(0, 0);
         window.resizeTo(screen.width, screen.height);
     });
 
     async function handleLogin() {
+        const role = document.getElementById("role").value;
         const email = document.getElementById("email").value.trim();
         const password = document.getElementById("password").value.trim();
         const error = document.getElementById("error");
         const loginBtn = document.querySelector(".login-btn");
 
-        if (!email || !password) {
-            error.textContent = "Please fill in both fields.";
+        if (!role || !email || !password) {
+            error.textContent = "Please fill in all fields.";
             error.style.display = "block";
             return;
         }
 
         error.style.display = "none";
 
-   
-        const validUsers = [
-            { email: "user@example.com", password: "123456" },
-            { email: "admin@example.com", password: "admin123" },
-            { email: "test@example.com", password: "testpass" }
-        ];
+       
+        const validUsers = {
+            user: [
+                { email: "user@example.com", password: "123456" },
+                { email: "test@example.com", password: "testpass" }
+            ],
+            manager: [
+                { email: "admin@example.com", password: "admin123" },
+                { email: "manager@example.com", password: "manager456" }
+            ]
+        };
 
         loginBtn.textContent = "Logging in...";
         loginBtn.disabled = true;
 
         try {
-            await new Promise(r => setTimeout(r, 800)); 
+            await new Promise(r => setTimeout(r, 800));
 
-            const userFound = validUsers.find(
+            const userFound = validUsers[role].find(
                 user => user.email === email && user.password === password
             );
 
             if (userFound) {
-                window.location.href = "./gfs_user_client.html";
+                if (role === "user") {
+                    window.location.href = "./gfs_user_client.html";
+                } else {
+                    window.location.href = "./gfs_manager_client.html";
+                }
             } else {
-                error.textContent = "Invalid email or password.";
+                error.textContent = "Invalid credentials for " + role + ".";
                 error.style.display = "block";
             }
         } catch (err) {
@@ -248,5 +262,3 @@
 
 </body>
 </html>
-
-
