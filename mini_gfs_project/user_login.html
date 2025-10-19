@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini GFS - Secure Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    :root {
+        --primary: #007bff;
+        --background: #f4f7fb;
+        --card-bg: #fff;
+        --text-dark: #333;
+        --text-light: #777;
+        --border-color: #e0e0e0;
+        --success: #28a745;
+    }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+        font-family: 'Roboto', sans-serif;
+        background: var(--background);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-container {
+        display: flex;
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(135deg, #007bff 45%, #0a58ca 100%);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .login-card {
+        background: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        width: 400px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .login-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .logo {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
+
+    .tagline {
+        font-size: 14px;
+        color: var(--text-light);
+        margin-bottom: 30px;
+    }
+
+    .input-group {
+        text-align: left;
+        margin-bottom: 20px;
+    }
+
+    .input-group label {
+        display: block;
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+    }
+
+    .input-group input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 5px;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .input-group input:focus {
+        border-color: var(--primary);
+    }
+
+    .options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .options label {
+        font-size: 14px;
+        color: var(--text-light);
+    }
+
+    .options a {
+        font-size: 14px;
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .options a:hover {
+        text-decoration: underline;
+    }
+
+    .login-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 12px;
+        width: 100%;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .login-btn:hover {
+        background: #0056b3;
+    }
+
+    .status-badge {
+        margin-top: 15px;
+        font-size: 13px;
+        color: var(--success);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .status-badge i {
+        font-size: 14px;
+    }
+
+    .error {
+        color: red;
+        font-size: 14px;
+        margin-bottom: 10px;
+        display: none;
+    }
+
+    @media (max-width: 480px) {
+        .login-card {
+            width: 90%;
+            padding: 30px 20px;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-card">
+        <div class="logo"><i class="fas fa-cloud"></i> Mini GFS</div>
+        <div class="tagline">Secure Cloud File System Access</div>
+
+        <div id="error" class="error">Invalid email or password.</div>
+
+        <div class="input-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
+        </div>
+
+        <div class="options">
+            <label><input type="checkbox" id="remember"> Remember me</label>
+            <a href="#">Forgot password?</a>
+        </div>
+
+        <button class="login-btn" onclick="handleLogin()">Login Securely</button>
+
+        <div class="status-badge">
+            <i class="fas fa-shield-alt"></i> Connection Secure
+        </div>
+    </div>
+</div>
+
+<script>
+    // 🖥 Make window full screen
+    window.addEventListener("load", () => {
+        window.moveTo(0, 0);
+        window.resizeTo(screen.width, screen.height);
+    });
+
+    async function handleLogin() {
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const error = document.getElementById("error");
+        const loginBtn = document.querySelector(".login-btn");
+
+        if (!email || !password) {
+            error.textContent = "Please fill in both fields.";
+            error.style.display = "block";
+            return;
+        }
+
+        error.style.display = "none";
+
+        // ✅ Multiple valid users
+        const validUsers = [
+            { email: "user@example.com", password: "123456" },
+            { email: "admin@example.com", password: "admin123" },
+            { email: "test@example.com", password: "testpass" }
+        ];
+
+        loginBtn.textContent = "Logging in...";
+        loginBtn.disabled = true;
+
+        try {
+            await new Promise(r => setTimeout(r, 800)); // simulate delay
+
+            const userFound = validUsers.find(
+                user => user.email === email && user.password === password
+            );
+
+            if (userFound) {
+                window.location.href = "./gfs_user_client.html";
+            } else {
+                error.textContent = "Invalid email or password.";
+                error.style.display = "block";
+            }
+        } catch (err) {
+            error.textContent = "Network error. Please try again.";
+            error.style.display = "block";
+        } finally {
+            loginBtn.textContent = "Login Securely";
+            loginBtn.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>
