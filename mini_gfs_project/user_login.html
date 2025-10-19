@@ -224,7 +224,7 @@
         loginBtn.disabled = true;
 
         try {
-            await new Promise(r => setTimeout(r, 800)); // simulate delay
+            await new Promise(r => setTimeout(r, 800)); 
 
             const userFound = validUsers.find(
                 user => user.email === email && user.password === password
@@ -248,4 +248,5 @@
 
 </body>
 </html>
+
 
